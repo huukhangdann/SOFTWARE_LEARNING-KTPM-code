@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunConfigForJavaFX" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.example.eventhandling.HelloApplication" />
+    <module name="eventHandling" />
+    <option name="VM_PARAMETERS" value="--module-path &quot;D:\Coding Apps\JavaFX\javafx-sdk-25.0.4\lib&quot; --add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
