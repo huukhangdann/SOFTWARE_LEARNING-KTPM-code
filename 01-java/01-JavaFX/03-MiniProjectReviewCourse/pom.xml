@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>SwitchingScenes</artifactId>
+    <artifactId>03-MiniProjectReviewCourse</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>SwitchingScenes</name>
+    <name>03-MiniProjectReviewCourse</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,7 +60,8 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.switchingscenes/com.example.switchingscenes.HelloApplication
+                            <mainClass>
+                                com.example._3miniprojectreviewcourse/com.example._3miniprojectreviewcourse.HelloApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
