@@ -9,6 +9,9 @@ public class HelloController {
     private Pane myPane;
 
     @FXML
+    private Label myLabel;
+
+    @FXML
     private void initialize(){
         Label label = new Label("Graph Area");
         myPane.getChildren().add(label);

@@ -1,0 +1,8 @@
+#myLb {
+    -fx-text-fill: red;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+#myPn{
+    -fx-background-color: lightblue;
+}
