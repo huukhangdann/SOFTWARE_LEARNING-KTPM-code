@@ -14,35 +14,49 @@ public class HelloController {
     @FXML
     private Label myLabel;
     private Circle firstVertex = null;
+
     @FXML
-    private void initialize(){
+    private void initialize() {
         Label label = new Label("Graph Area");
         myPane.getChildren().add(label);
         myPane.setOnMouseClicked(eventPane -> {
             double x = eventPane.getX();
             double y = eventPane.getY();
             Circle circle = new Circle(x, y, 15);
+
+            // Event mouse CLICKED
             circle.setOnMouseClicked(eventCircle -> {
-                System.out.println("Vertex clicked");
-                circle.setFill(Color.valueOf("red"));
-                checkVertex(circle);
-                eventCircle.consume();
+                if (eventCircle.isStillSincePress()) {
+                    System.out.println("Vertex clicked");
+                    circle.setFill(Color.valueOf("red"));
+                    checkVertex(circle);
+                }
+                eventCircle.consume(); // stop bubbling to pane
             });
+
+            // Event mouse DRAGGED
+            circle.setOnMouseDragged(eventCircle -> {
+                double newX = eventCircle.getX();
+                double newY = eventCircle.getY();
+                circle.setCenterX(newX);
+                circle.setCenterY(newY);
+                eventCircle.consume(); // stop bubbling to pane
+            });
+
             myPane.getChildren().add(circle);
         });
     }
 
     // if choosing a vertex, call this method to check if it's the second vertex -> make line
-    private void checkVertex(Circle circle){
-        if(firstVertex!=null){
+    private void checkVertex(Circle circle) {
+        if (firstVertex != null) {
             makeLine(firstVertex, circle);
-        }
-        else{
-            firstVertex=circle;
+        } else {
+            firstVertex = circle;
         }
     }
 
-    private void makeLine(Circle circle1, Circle circle2){
+    private void makeLine(Circle circle1, Circle circle2) {
         double x1 = circle1.getCenterX();
         double x2 = circle2.getCenterX();
         double y1 = circle1.getCenterY();
