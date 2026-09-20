@@ -11,7 +11,7 @@
       <Label id="myLb" fx:id="myLabel" text="Graph Editor" BorderPane.alignment="CENTER" />
    </top>
    <center>
-      <Pane fx:id="myPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane id="myPn" fx:id="myPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
