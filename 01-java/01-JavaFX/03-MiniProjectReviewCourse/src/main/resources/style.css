@@ -1,8 +1,12 @@
 #myLb {
     -fx-text-fill: red;
-    -fx-font-size: 20;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 #myPn{
     -fx-background-color: lightblue;
+}
+#WeightText{
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
 }
