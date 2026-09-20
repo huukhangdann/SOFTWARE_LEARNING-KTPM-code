@@ -14,6 +14,7 @@ public class HelloController {
     @FXML
     private Label myLabel;
     private Circle firstVertex = null;
+    private int count = 1;
 
     @FXML
     private void initialize() {
@@ -23,6 +24,9 @@ public class HelloController {
             double x = eventPane.getX();
             double y = eventPane.getY();
             Circle circle = new Circle(x, y, 15);
+            System.out.println(count + " circle created!");
+            count++;
+
 
             // Event mouse CLICKED
             circle.setOnMouseClicked(eventCircle -> {
@@ -57,12 +61,14 @@ public class HelloController {
     }
 
     private void makeLine(Circle circle1, Circle circle2) {
-        double x1 = circle1.getCenterX();
-        double x2 = circle2.getCenterX();
-        double y1 = circle1.getCenterY();
-        double y2 = circle2.getCenterY();
-        Line line = new Line(x1, y1, x2, y2);
+        Line line = new Line();
+        line.startXProperty().bind(circle1.centerXProperty());
+        line.startYProperty().bind(circle1.centerYProperty());
+
+        line.endXProperty().bind(circle2.centerXProperty());
+        line.endYProperty().bind(circle2.centerYProperty());
         line.setStrokeWidth(2);
+        line.setMouseTransparent(true); // Disable mouse for lines
         myPane.getChildren().add(line);
         firstVertex = null;
         circle1.setFill(Color.BLACK);
