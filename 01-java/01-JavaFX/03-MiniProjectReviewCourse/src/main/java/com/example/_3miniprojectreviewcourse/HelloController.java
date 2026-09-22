@@ -26,14 +26,17 @@ public class HelloController {
     private Label myLabel;
     private Vertex firstVertex = null;
     private int id = 1;
-    Graph graph;
-    Map<Vertex, Circle> vertexCircleMapping = new HashMap<>();
+    private Graph graph;
+    private Map<Vertex, Circle> vertexCircleMapping = new HashMap<>();
 
+    private void paneSetUp(){
+        Label label = new Label("Graph Area");
+        myPane.getChildren().add(label);
+    }
     @FXML
     private void initialize() {
         // adding label to the pane
-        Label label = new Label("Graph Area");
-        myPane.getChildren().add(label);
+        paneSetUp();
 
         // Init a graph
         graph = new Graph();
@@ -94,7 +97,7 @@ public class HelloController {
         Circle circle1 = vertexCircleMapping.get(vertex1);
         Circle circle2 = vertexCircleMapping.get(vertex2);
         // add edge to the graph
-        Edge edge = new Edge(((Vertex) circle1.getUserData()), ((Vertex) circle2.getUserData()), 0);
+        Edge edge = new Edge(vertex1, vertex2, 0);
         graph.addEdge(edge);
 
         // make line and binding it to the vertex
@@ -134,6 +137,17 @@ public class HelloController {
         firstVertex = null;
         circle1.setFill(Color.BLACK);
         circle2.setFill(Color.BLACK);
+    }
+
+    @FXML
+    private void clearGraph(){
+        graph.getEdges().clear();
+        graph.getVertices().clear();
+        vertexCircleMapping.clear();
+        firstVertex = null;
+        id = 1;
+        myPane.getChildren().clear();
+        paneSetUp();
     }
 
 }

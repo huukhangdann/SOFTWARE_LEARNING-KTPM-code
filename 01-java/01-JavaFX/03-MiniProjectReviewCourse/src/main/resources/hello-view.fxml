@@ -18,7 +18,7 @@
          <children>
             <Button mnemonicParsing="false" text="Add Vertex" />
             <Button mnemonicParsing="false" text="Add Edge" />
-            <Button mnemonicParsing="false" text="Clear" />
+            <Button mnemonicParsing="false" onAction="#clearGraph" text="Clear" />
          </children>
       </HBox>
    </bottom>
