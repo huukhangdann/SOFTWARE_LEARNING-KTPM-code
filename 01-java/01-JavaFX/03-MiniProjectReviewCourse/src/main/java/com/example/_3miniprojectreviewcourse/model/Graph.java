@@ -7,7 +7,7 @@ public class Graph {
     private List<Vertex> vertices;
     private List<Edge> edges;
 
-    public Graph(List<Edge> edges, List<Vertex> vertices) {
+    public Graph() {
         this.edges = new ArrayList<>();
         this.vertices = new ArrayList<>();
     }

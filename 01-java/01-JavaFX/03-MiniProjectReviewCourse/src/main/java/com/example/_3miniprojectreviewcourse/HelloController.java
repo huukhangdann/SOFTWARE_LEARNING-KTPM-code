@@ -4,7 +4,6 @@ import com.example._3miniprojectreviewcourse.model.Edge;
 import com.example._3miniprojectreviewcourse.model.Graph;
 import com.example._3miniprojectreviewcourse.model.Vertex;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,7 +14,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HelloController {
     @FXML
@@ -23,9 +24,10 @@ public class HelloController {
 
     @FXML
     private Label myLabel;
-    private Circle firstVertex = null;
+    private Vertex firstVertex = null;
     private int id = 1;
     Graph graph;
+    Map<Vertex, Circle> vertexCircleMapping = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -34,9 +36,7 @@ public class HelloController {
         myPane.getChildren().add(label);
 
         // Init a graph
-        List<Edge> edges = new ArrayList<>();
-        List<Vertex> vertices = new ArrayList<>();
-        graph = new Graph(edges, vertices);
+        graph = new Graph();
 
         // Pane's clicked event handler
         myPane.setOnMouseClicked(eventPane -> {
@@ -52,13 +52,14 @@ public class HelloController {
             System.out.println((id++) + " circle created!");
             myPane.getChildren().add(circle);
             circle.setUserData(vertex); // connect the circle to the vertex
+            vertexCircleMapping.put(vertex, circle); // connect the vertex to the circle
 
             // Event mouse CLICKED
             circle.setOnMouseClicked(eventCircle -> {
                 if (eventCircle.isStillSincePress()) {
                     System.out.println("Vertex clicked");
                     circle.setFill(Color.valueOf("red"));
-                    checkVertex(circle);
+                    checkVertex(((Vertex)circle.getUserData()));
                 }
                 eventCircle.consume(); // stop bubbling to pane
             });
@@ -81,17 +82,19 @@ public class HelloController {
     }
 
     // if choosing a vertex, call this method to check if it's the second vertex -> make line
-    private void checkVertex(Circle circle) {
+    private void checkVertex(Vertex vertex) {
         if (firstVertex != null) {
-            makeLine(firstVertex, circle);
+            makeLine(firstVertex, vertex);
         } else {
-            firstVertex = circle;
+            firstVertex = vertex;
         }
     }
 
-    private void makeLine(Circle circle1, Circle circle2) {
+    private void makeLine(Vertex vertex1, Vertex vertex2) {
+        Circle circle1 = vertexCircleMapping.get(vertex1);
+        Circle circle2 = vertexCircleMapping.get(vertex2);
         // add edge to the graph
-        Edge edge = new Edge(0, ((Vertex) circle1.getUserData()), ((Vertex) circle2.getUserData()));
+        Edge edge = new Edge(((Vertex) circle1.getUserData()), ((Vertex) circle2.getUserData()), 0);
         graph.addEdge(edge);
 
         // make line and binding it to the vertex
