@@ -12,10 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HelloController {
@@ -29,10 +26,12 @@ public class HelloController {
     private Graph graph;
     private Map<Vertex, Circle> vertexCircleMapping = new HashMap<>();
 
+    /* SET UP */
     private void paneSetUp(){
         Label label = new Label("Graph Area");
         myPane.getChildren().add(label);
     }
+
     @FXML
     private void initialize() {
         // adding label to the pane
@@ -42,7 +41,35 @@ public class HelloController {
         graph = new Graph();
 
         // Pane's clicked event handler
+        handlePaneClicked();
+    }
+
+    /* EVENT HANDLERS */
+    private void handleVertexClicked(Circle circle){
+        circle.setOnMouseClicked(eventCircle -> {
+            if (eventCircle.isStillSincePress()) {
+                System.out.println("Vertex clicked");
+                circle.setFill(Color.valueOf("red"));
+                newLineCheck(((Vertex)circle.getUserData()));
+            }
+            eventCircle.consume(); // stop bubbling to pane
+        });
+    }
+
+    private void handleVertexDragged(Circle circle){
+        circle.setOnMouseDragged(eventCircle -> {
+            double newX = eventCircle.getX();
+            double newY = eventCircle.getY();
+            circle.setCenterX(newX);
+            circle.setCenterY(newY);
+            updateVertexCoordinate(((Vertex)circle.getUserData()),newX, newY);
+            eventCircle.consume(); // stop bubbling to pane
+        });
+    }
+
+    private void handlePaneClicked(){
         myPane.setOnMouseClicked(eventPane -> {
+            // Get coordinate of the mouse
             double x = eventPane.getX();
             double y = eventPane.getY();
 
@@ -58,39 +85,50 @@ public class HelloController {
             vertexCircleMapping.put(vertex, circle); // connect the vertex to the circle
 
             // Event mouse CLICKED
-            circle.setOnMouseClicked(eventCircle -> {
-                if (eventCircle.isStillSincePress()) {
-                    System.out.println("Vertex clicked");
-                    circle.setFill(Color.valueOf("red"));
-                    checkVertex(((Vertex)circle.getUserData()));
-                }
-                eventCircle.consume(); // stop bubbling to pane
-            });
+            handleVertexClicked(circle);
 
             // Event mouse DRAGGED
-            circle.setOnMouseDragged(eventCircle -> {
-                double newX = eventCircle.getX();
-                double newY = eventCircle.getY();
-                circle.setCenterX(newX);
-                circle.setCenterY(newY);
-                updateVertex(((Vertex)circle.getUserData()),newX, newY);
-                eventCircle.consume(); // stop bubbling to pane
-            });
+            handleVertexDragged(circle);
         });
     }
 
-    private void updateVertex(Vertex vertex, double x, double y) {
+    private void handleTextFieldType(TextField textField, Circle circle1, Circle circle2, Edge edge){
+        textField.setOnAction(event -> {
+            String value = textField.getText();
+            int weight = Integer.parseInt(value);
+            edge.setWeight(weight);
+            Text weightText = new Text(value);
+            weightText.setFill(Color.WHITE);
+            weightText.setId("WeightText");
+            weightText.setMouseTransparent(true);
+            weightText.layoutXProperty().bind(Bindings.divide(Bindings.add(circle1.centerXProperty(), circle2.centerXProperty()), 2));
+            weightText.layoutYProperty().bind(Bindings.divide(Bindings.add(circle1.centerYProperty(), circle2.centerYProperty()), 1.85));
+            myPane.getChildren().remove(textField);
+            myPane.getChildren().add(weightText);
+        });
+    }
+
+    /* Graph function */
+    private void updateVertexCoordinate(Vertex vertex, double x, double y) {
         vertex.setX(x);
         vertex.setY(y);
     }
 
     // if choosing a vertex, call this method to check if it's the second vertex -> make line
-    private void checkVertex(Vertex vertex) {
+    private void newLineCheck(Vertex vertex) {
         if (firstVertex != null) {
             makeLine(firstVertex, vertex);
         } else {
             firstVertex = vertex;
         }
+    }
+
+    private TextField createTextField(double x, double y){
+        TextField textField = new TextField();
+        textField.setLayoutX(x);
+        textField.setLayoutY(y);
+        textField.setMinWidth(3);
+        return textField;
     }
 
     private void makeLine(Vertex vertex1, Vertex vertex2) {
@@ -109,26 +147,11 @@ public class HelloController {
         line.endYProperty().bind(circle2.centerYProperty());
 
         // add weight for the edge
-        TextField textField = new TextField();
         double midx = (circle1.getCenterX() + circle2.getCenterX()) / 2;
         double midy = (circle1.getCenterY() + circle2.getCenterY()) / 2;
-        textField.setLayoutX(midx);
-        textField.setLayoutY(midy);
-        textField.setMinWidth(3);
-        textField.setOnAction(event -> {
-            String value = textField.getText();
-            int weight = Integer.parseInt(value);
-            ((Edge)line.getUserData()).setWeight(weight); //Update the real weight of the edge
-           // System.out.println(weight);
-            Text weightText = new Text(value);
-            weightText.setFill(Color.WHITE);
-            weightText.setId("WeightText");
-            weightText.setMouseTransparent(true);
-            weightText.layoutXProperty().bind(Bindings.divide(Bindings.add(circle1.centerXProperty(), circle2.centerXProperty()), 2));
-            weightText.layoutYProperty().bind(Bindings.divide(Bindings.add(circle1.centerYProperty(), circle2.centerYProperty()), 1.85));
-            myPane.getChildren().remove(textField);
-            myPane.getChildren().add(weightText);
-        });
+        TextField textField = createTextField(midx, midy);
+
+        handleTextFieldType(textField, circle1, circle2, edge);
 
         line.setStrokeWidth(2);
         line.setMouseTransparent(true); // Disable mouse for lines
