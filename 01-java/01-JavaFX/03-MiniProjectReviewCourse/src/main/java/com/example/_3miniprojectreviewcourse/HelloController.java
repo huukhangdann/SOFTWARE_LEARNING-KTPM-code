@@ -1,5 +1,8 @@
 package com.example._3miniprojectreviewcourse;
 
+import com.example._3miniprojectreviewcourse.model.Edge;
+import com.example._3miniprojectreviewcourse.model.Graph;
+import com.example._3miniprojectreviewcourse.model.Vertex;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.fxml.FXML;
@@ -11,6 +14,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HelloController {
     @FXML
     private Pane myPane;
@@ -18,19 +24,34 @@ public class HelloController {
     @FXML
     private Label myLabel;
     private Circle firstVertex = null;
-    private int count = 1;
+    private int id = 1;
+    Graph graph;
 
     @FXML
     private void initialize() {
+        // adding label to the pane
         Label label = new Label("Graph Area");
         myPane.getChildren().add(label);
+
+        // Init a graph
+        List<Edge> edges = new ArrayList<>();
+        List<Vertex> vertices = new ArrayList<>();
+        graph = new Graph(edges, vertices);
+
+        // Pane's clicked event handler
         myPane.setOnMouseClicked(eventPane -> {
             double x = eventPane.getX();
             double y = eventPane.getY();
-            Circle circle = new Circle(x, y, 10);
-            System.out.println(count + " circle created!");
-            count++;
 
+            // Add Vertex to the graph
+            Vertex vertex = new Vertex(id, x, y);
+            graph.addVertex(vertex);
+
+            // Create Circle to the pane
+            Circle circle = new Circle(x, y, 10);
+            System.out.println((id++) + " circle created!");
+            myPane.getChildren().add(circle);
+            circle.setUserData(vertex); // connect the circle to the vertex
 
             // Event mouse CLICKED
             circle.setOnMouseClicked(eventCircle -> {
@@ -48,11 +69,15 @@ public class HelloController {
                 double newY = eventCircle.getY();
                 circle.setCenterX(newX);
                 circle.setCenterY(newY);
+                updateVertex(((Vertex)circle.getUserData()),newX, newY);
                 eventCircle.consume(); // stop bubbling to pane
             });
-
-            myPane.getChildren().add(circle);
         });
+    }
+
+    private void updateVertex(Vertex vertex, double x, double y) {
+        vertex.setX(x);
+        vertex.setY(y);
     }
 
     // if choosing a vertex, call this method to check if it's the second vertex -> make line
@@ -65,8 +90,13 @@ public class HelloController {
     }
 
     private void makeLine(Circle circle1, Circle circle2) {
+        // add edge to the graph
+        Edge edge = new Edge(0, ((Vertex) circle1.getUserData()), ((Vertex) circle2.getUserData()));
+        graph.addEdge(edge);
+
         // make line and binding it to the vertex
         Line line = new Line();
+        line.setUserData(edge);
         line.startXProperty().bind(circle1.centerXProperty());
         line.startYProperty().bind(circle1.centerYProperty());
         line.endXProperty().bind(circle2.centerXProperty());
@@ -82,7 +112,8 @@ public class HelloController {
         textField.setOnAction(event -> {
             String value = textField.getText();
             int weight = Integer.parseInt(value);
-            System.out.println(weight);
+            ((Edge)line.getUserData()).setWeight(weight); //Update the real weight of the edge
+           // System.out.println(weight);
             Text weightText = new Text(value);
             weightText.setFill(Color.WHITE);
             weightText.setId("WeightText");
